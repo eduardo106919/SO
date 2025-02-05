@@ -21,7 +21,7 @@ person.o: person.c person.h
 pessoas.o: pessoas.c person.h
 
 clean:
-	rm *.o
-	rm mycat
-	rm mycp
-	rm pessoas file_pessoas
+	rm -f *.o
+	rm -f mycat
+	rm -f mycp
+	rm -f pessoas file_pessoas
