@@ -1,4 +1,3 @@
-#include <sys/types.h>
 #include <unistd.h>
 #include <fcntl.h>
 #include <stdio.h>
@@ -9,16 +8,21 @@ int main(int argc, char **argv) {
     int file_descriptor = STDIN_FILENO;
 
     if (argc == 2) {
+        // open the source file
         file_descriptor = open(argv[1], O_RDONLY);
         if (file_descriptor == -1) {
-            perror("Error");
+            perror(argv[1]);
             return 1;
         }
     }
 
-    while ((bytes_read = read(file_descriptor, buffer, BUFSIZ)) > 0) {
+    // read buffer size bytes from the source file (or stdin)
+    while ((bytes_read = read(file_descriptor, buffer, sizeof(buffer))) > 0)
         write(STDOUT_FILENO, buffer, bytes_read);
-    }
+
+    // close the file
+    if (file_descriptor > STDERR_FILENO)
+        close(file_descriptor);
 
     return 0;
 }
