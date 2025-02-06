@@ -7,21 +7,21 @@ help:
 	@echo "Usage:"
 	@echo "make mycat"
 	@echo "make mycp"
-	@echo "make pessoas"
+	@echo "make people"
 	@echo "make clean"
 
 mycat: mycat.o
 
 mycat.o: mycat.c
 
-pessoas: pessoas.o person.o
+people: people.o person.o
 
 person.o: person.c person.h
 
-pessoas.o: pessoas.c person.h
+people.o: people.c person.h
 
 clean:
 	rm -f *.o
 	rm -f mycat
 	rm -f mycp
-	rm -f pessoas file_pessoas
+	rm -f people community
