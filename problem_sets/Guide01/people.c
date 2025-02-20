@@ -1,17 +1,22 @@
+#include "person.h"
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
 #include <unistd.h>
 #include <fcntl.h>
-#include <stdlib.h>
-#include "person.h"
+
+/* shows the usage information for this program */
+void usage(char *name) {
+    printf("Usage:\n");
+    printf("Add new person:               %s -i [name] [age]\n", name);
+    printf("List first N people:          %s -l [N]\n", name);
+    printf("Change person age (name):     %s -u [name] [age]\n", name);
+    printf("Change person age (position): %s -o [position] [age]\n", name);
+}
 
 int main(int argc, char **argv){
     if (argc < 3) {
-        printf("Usage:\n");
-        printf("Add new person: %s -i [name] [age]\n", argv[0]);
-        printf("List first N people: %s -l [N]\n", argv[0]);
-        printf("Change person age (name): %s -u [name] [age]\n", argv[0]);
-        printf("Change person age (position): %s -o [position] [age]\n", argv[0]);
+        usage(argv[0]);
 
         return 1;
     }
@@ -37,10 +42,9 @@ int main(int argc, char **argv){
         // write the content in the file
         write(community, &john_doe, sizeof(john_doe));
         fprintf(stdout, "register %u\n", reg);
-    }
 
-    // list the N first people
-    if (strcmp(argv[1], "-l") == 0) {
+    } else if (strcmp(argv[1], "-l") == 0) {
+        // list the N first people
         unsigned N = atol(argv[2]);
 
         unsigned i = 0;
@@ -48,10 +52,9 @@ int main(int argc, char **argv){
             show_person(&john_doe);
             i++;
         }
-    }
 
-    // change a person's age, by it's name
-    if (strcmp(argv[1], "-u") == 0) {
+    } else if (strcmp(argv[1], "-u") == 0) {
+        // change a person's age, by it's name
         unsigned new_age = atol(argv[3]);
 
         while ((bytes_read = read(community, &john_doe, sizeof(john_doe))) > 0 && strcmp(john_doe.name, argv[2]) != 0);
@@ -65,17 +68,16 @@ int main(int argc, char **argv){
             // write back the changes
             write(community, &john_doe, sizeof(john_doe));
         }
-    }
 
-    // change a person's age, by it's position
-    if (strcmp(argv[1], "-o") == 0) {
+    } else if (strcmp(argv[1], "-o") == 0) {
+        // change a person's age, by it's position
         unsigned position = atol(argv[2]);
         unsigned new_age = atol(argv[3]);
 
         // go to the selected position
         off_t bytes = lseek(community, position * sizeof(john_doe), SEEK_SET);
 
-        // position is invalid
+        // position must be valid
         if (bytes < lseek(community, 0, SEEK_END)) {
             // read the person
             read(community, &john_doe, sizeof(john_doe));
@@ -86,9 +88,13 @@ int main(int argc, char **argv){
             // write back the changes
             write(community, &john_doe, sizeof(john_doe));
         }
+    } else {
+        printf("Invalid flag\n");
+        usage(argv[0]);
+
+        return 1;
     }
 
-    unlink("community");
     close(community);
 
     return 0;
