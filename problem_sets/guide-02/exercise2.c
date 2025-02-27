@@ -2,20 +2,19 @@
 #include <stdio.h>
 
 int main(void) {
+    pid_t identifier = fork();
 
-    pid_t rc_id = fork();
-
-    if (rc_id == 0) {
+    if (identifier == 0) {
         printf("c | id: %d\n", getpid());
         printf("c | parent id: %d\n", getppid());
         _exit(0);
-    } else if (rc > 0) {
+    } else if (identifier > 0) {
         printf("p | id: %d\n", getpid());
         printf("p | parent id: %d\n", getppid());
-        printf("p | child id: %d\n", rc_id);
+        printf("p | child id: %d\n", identifier);
     } else {
         // error handling
-        perror("fork");
+        perror("fork()");
         return 1;
     }
 
