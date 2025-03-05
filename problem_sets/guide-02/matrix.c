@@ -6,8 +6,9 @@
 #include <sys/wait.h>
 #include <stdbool.h>
 #include <fcntl.h>
+#include <string.h>
 
-#define MAX_RAND 100
+#define MAX_VALUE 100
 #define ROWS 10
 #define COLUMNS 10
 
@@ -20,15 +21,24 @@ int **create_matrix() {
     if (matrix == NULL)
         return NULL;
 
-    // populate with random numbers
-    for (int i = 0; i < ROWS; i++) {
+    for (size_t i = 0; i < ROWS; i++) {
         matrix[i] = (int *) malloc(sizeof(int) * COLUMNS);
         if (matrix[i] == NULL)
             return NULL;
 
-        for (int j = 0; j < COLUMNS; j++)
-            matrix[i][j] = rand() % MAX_RAND;
+        // populate each line with random numbers (or zeros)
+        for (size_t j = 0; j < COLUMNS; j++) {
+            matrix[i][j] = rand() % MAX_VALUE;
+            // matrix[i][j] = 0;
+        }
     }
+
+    /*
+    matrix[0][5] = 10;
+    matrix[3][0] = 10;
+    matrix[5][6] = 34;
+    matrix[9][1] = 67;
+    */
 
     return matrix;
 }
@@ -151,12 +161,11 @@ int write_matrix_file(int **matrix, const char *file_name) {
     }
 
     size_t bytes_written = 0;
-    // write every line in the file
     for (size_t i = 0; i < ROWS; i++) {
-        bytes_written = write(file, matrix[i], sizeof(matrix[i]));
+        bytes_written = write(file, matrix[i], sizeof(int) * COLUMNS);
         if (bytes_written == -1) {
             perror("write()");
-            return 1;
+            return 2;
         }
     }
 
@@ -182,15 +191,13 @@ int find_value_file(const char *file_name, int value) {
 
     pid_t identifier;
     size_t i = 0, j = 0, bytes_read = 0;
-    int buffer[ROWS][COLUMNS];
+    int buffer[COLUMNS];
+    memset(buffer, 0, sizeof(int) * COLUMNS);
 
     for (i = 0; i < ROWS; i++) {
-        // read a line from the file
-        bytes_read = read(file, buffer[i], sizeof(buffer[i]));
+        bytes_read = read(file, buffer, sizeof(int) * COLUMNS);
         if (bytes_read == -1) {
             perror("read()");
-            close(file);
-
             return -2;
         }
 
@@ -199,7 +206,7 @@ int find_value_file(const char *file_name, int value) {
         // child process
         if (identifier == 0) {
             for (j = 0; j < COLUMNS; j++) {
-                if (buffer[i][j] == value) {
+                if (buffer[j] == value) {
                     _exit(i);
                 }
             }
@@ -222,7 +229,7 @@ int find_value_file(const char *file_name, int value) {
 
         if (identifier != -1 && WIFEXITED(status) != 0) {
             out = WEXITSTATUS(status);
-            if (out < ROWS && out >= 0) {
+            if (out > -1 && out < ROWS) {
                 row = out;
             }
         } else if (identifier == -1) {

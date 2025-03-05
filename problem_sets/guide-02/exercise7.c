@@ -20,9 +20,10 @@ int main(void) {
     }
 
     int value = rand() % MAX_VALUE;
+    // int value = 10;
     printf("-> searching for %d\n", value);
 
-    find_value_file(file_name, value);
+    // find_value_file(file_name, value);
 
     int row = find_value_file(file_name, value);
     if (row >= 0) {
