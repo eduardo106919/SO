@@ -1,5 +1,7 @@
 # Debugging processes
 
+Debugging information about processes in [gdb](https://sourceware.org/gdb/current/onlinedocs/gdb.pdf).
+
 Chose whether to follow the **parent** or **child** process:
 ```bash
 >> set follow-fork-mode child
@@ -8,8 +10,8 @@ Chose whether to follow the **parent** or **child** process:
 
 Chose whether to **follow** a process after it ends:
 ```bash
->> set detach-on-fork mode on
->> set detach-on-fork mode off
+>> set detach-on-fork on
+>> set detach-on-fork off
 ```
 
 **Navigate** through the processes:
