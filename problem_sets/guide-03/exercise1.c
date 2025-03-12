@@ -4,7 +4,7 @@
 int main(void) {
 
     execlp("ls", "ls", "-l", NULL);
-    printf("Something went wrong with execlp()!!\n");
+    perror("ls");
 
-    return 0;
+    return 1;
 }

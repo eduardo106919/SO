@@ -4,6 +4,7 @@
 
 int main(void) {
 
+    int res = 0;
     pid_t child = fork();
     if (child == -1) {
         perror("fork()");
@@ -13,8 +14,9 @@ int main(void) {
         printf("process %d executing 'ls -l'\n", getpid());
         execlp("ls", "l", "-l", NULL);
 
+        perror("ls");
         // execl() got an error
-        _exit(1);
+        _exit(127);
     } else {
         // parent process
         int status = 0;
@@ -24,14 +26,17 @@ int main(void) {
             return 1;
         }
 
-        // execl() got an error
-        if (status == 1) {
-            printf("something went wrong with process %d!\n", child);
-        } else {
-            printf("process %d executed with sucess!\n", child);
+        if (WIFEXITED(status) != 0) {
+            // exec() went wrong
+            res = WEXITSTATUS(status);
+                
+            if (res == 127) {
+                printf("Something went wrong with process %d\n", child);
+            } else {
+                printf("Process %d returned %d\n", child, res);
+            }
         }
     }
-
 
     return 0;
 }
