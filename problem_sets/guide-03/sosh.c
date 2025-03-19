@@ -7,8 +7,7 @@
 #include <unistd.h>
 #include <sys/wait.h>
 
-
-int execute_command(const char *command) {
+void execute_command(const char *command) {
     wordexp_t temp;
     // tokenize the string
     wordexp(command, &temp, 0);
@@ -25,15 +24,12 @@ int execute_command(const char *command) {
 
     execvp(tokens[0], tokens);
     perror(tokens[0]);
-
-    return -1;
 }
-
 
 int sosh(void) {
     char *line = NULL;
     pid_t child = 0;
-    int res = 0, status = 0, background = 0;
+    int status = 0, background = 0;
 
     while ((line = readline("[sosh]$ ")) != NULL && (strcmp(line, "exit") != 0)) {
         add_history(line);
@@ -44,6 +40,7 @@ int sosh(void) {
         // background check
         if (line[strlen(line) - 1] == '&') {
             background = 1;
+            line[strlen(line) - 1] = '\0';
         }
 
         child = fork();
@@ -56,26 +53,18 @@ int sosh(void) {
             return -1;
         case 0:
             /* child code */
-            res = execute_command(line);
-            if (res == -1) {
-                perror("execute_command()");
+            execute_command(line);
+            perror("execute_command()");
 
-                _exit(1);
-            }
-
-            _exit(0);
+            _exit(1);
         default:
             /* parent code */
-            if (background == 0) {
-                child = waitpid(child, &status, 0);
-                if (child == -1) {
-                    perror("wait()");
-
-                    return -1;
-                }
-            } else {
-                printf("process %d running in the background\n", child);
+            if (background == 1) {
+                printf("[%d] running in the background\n", child);
                 background = 0;
+            } else if (waitpid(child, &status, 0) == -1) {
+                perror("wait()");
+                return -1;
             }
 
             break;
@@ -84,7 +73,6 @@ int sosh(void) {
 
     return 0;
 }
-
 
 int main(void) {
     using_history();
