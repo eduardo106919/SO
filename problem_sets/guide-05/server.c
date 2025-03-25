@@ -35,9 +35,6 @@ int main(void) {
             return 1;
         }
 
-        char client_fifo[50];
-        // receive client name
-        out = read(input, client_fifo, sizeof(client_fifo));
         // receive request
         out = read(input, needle, sizeof(needle));
         close(input);
@@ -60,7 +57,7 @@ int main(void) {
             count = count_needle(atoi(needle));
 
             // open response channel
-            output = open(client_fifo, O_WRONLY);
+            output = open(CLIENT, O_WRONLY);
             if (output == -1) {
                 perror("open() 2");
                 return 1;

@@ -20,8 +20,11 @@ int main(int argc, char **argv) {
         return 1;
     }
 
-    char client_fifo[50];
-    sprintf(client_fifo, "%s_%d", CLIENT, getpid());
+    // create response channel
+    if (mkfifo(CLIENT, 0666) == -1) {
+        perror("mkfifo()");
+        return 1;
+    }
 
     // open request channel
     int output = open(SERVER, O_WRONLY);
@@ -30,8 +33,7 @@ int main(int argc, char **argv) {
         return 1;
     }
 
-    // send client name
-    ssize_t out = write(output, client_fifo, strlen(client_fifo) + 1);
+    ssize_t out = 0;
     // send request
     out = write(output, argv[1], strlen(argv[1]) + 1);
     close(output);
@@ -42,15 +44,8 @@ int main(int argc, char **argv) {
     }
 
     if (strcmp(argv[1], "-f") != 0) {
-
-        // create response channel
-        if (mkfifo(client_fifo, 0666) == -1) {
-            perror("mkfifo()");
-            return 1;
-        }
-
         // open response channel
-        int input = open(client_fifo, O_RDONLY);
+        int input = open(CLIENT, O_RDONLY);
         if (input == -1) {
             perror("open()");
             return 1;
@@ -60,7 +55,7 @@ int main(int argc, char **argv) {
         // receive answer
         out = read(input, &count, sizeof(count));
         close(input);
-        unlink(client_fifo);
+        unlink(CLIENT);
 
         if (out == -1) {
             perror("read()");
@@ -68,6 +63,8 @@ int main(int argc, char **argv) {
         }
 
         printf("count %s: %d\n", argv[1], count);
+    } else {
+        unlink(CLIENT);
     }
 
     return 0;
