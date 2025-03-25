@@ -32,3 +32,4 @@ clean:
 	rm -f *.out
 	rm -f server
 	rm -f client
+	rm -f fifo_*
