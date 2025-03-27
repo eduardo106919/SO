@@ -3,6 +3,7 @@
 #include <string.h>
 #include <sys/wait.h>
 #include <stdlib.h>
+#include <time.h>
 
 #define MAX_VALUE 100
 
@@ -151,6 +152,7 @@ int lookup_value(int **matrix, int value, struct position *storage) {
 }
 
 int main(void) {
+    srand(time(0));
 
     int **m = create_matrix();
     // m[0][5] = 45;

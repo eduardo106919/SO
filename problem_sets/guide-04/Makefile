@@ -9,7 +9,7 @@ help:
 	@echo "make exercise1"
 	@echo "make exercise2"
 	@echo "make exercise3"
-	@echo "make exercise4"
+	@echo "make extra"
 
 exercise1: exercise1.c
 
@@ -17,7 +17,7 @@ exercise2: exercise2.c
 
 exercise3: exercise3.c
 
-exercise4: exercise4.c
+extra: extra.c
 
 
 clean:
@@ -26,4 +26,4 @@ clean:
 	rm -f exercise1
 	rm -f exercise2
 	rm -f exercise3
-	rm -f exercise4
+	rm -f extra
