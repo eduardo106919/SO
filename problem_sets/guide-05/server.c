@@ -9,6 +9,8 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 
+#define BUF_SIZE 50
+
 int main(void) {
     printf("server is online\n");
 
@@ -17,9 +19,9 @@ int main(void) {
 
     int input = 0, output = 0;
     ssize_t out = 0;
-    char needle[20];
-    int count = 0;
+    Msg message;
     int stop = 1;
+    char client_fifo[BUF_SIZE];
 
     // create request channel
     if (mkfifo(SERVER, 0666) == -1) {
@@ -34,9 +36,9 @@ int main(void) {
             perror("open() 1");
             return 1;
         }
-
+        
         // receive request
-        out = read(input, needle, sizeof(needle));
+        out = read(input, &message, sizeof(message));
         close(input);
 
         if (out == -1) {
@@ -47,24 +49,24 @@ int main(void) {
         }
 
         // shut down server
-        if (strcmp(needle, "-f") == 0) {
+        if (out > 0 && message.pid == -1) {
             printf("server is shutting down\n");
-            close(input);
             unlink(SERVER);
 
             stop = 0;
         } else {
-            count = count_needle(atoi(needle));
+            message.occurrences = count_needle(message.needle);
 
+            sprintf(client_fifo, "%s_%d", CLIENT, message.pid);
             // open response channel
-            output = open(CLIENT, O_WRONLY);
+            output = open(client_fifo, O_WRONLY);
             if (output == -1) {
                 perror("open() 2");
                 return 1;
             }
 
             // send response
-            out = write(output, &count, sizeof(count));
+            out = write(output, &message, sizeof(message));
             close(output);
 
             if (out == -1) {
