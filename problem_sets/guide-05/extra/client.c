@@ -9,6 +9,7 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 
+#define BUF_SIZE 50
 
 void usage(const char *command) {
     printf("Usage:\n");
@@ -23,8 +24,11 @@ int main(int argc, char **argv) {
         return 1;
     }
 
+    char client_fifo[BUF_SIZE];
+    sprintf(client_fifo, "%s_%d", CLIENT, getpid());
+
     // create response channel
-    if (mkfifo(CLIENT, 0666) == -1) {
+    if (mkfifo(client_fifo, 0666) == -1) {
         perror("mkfifo()");
         return 1;
     }
@@ -45,7 +49,7 @@ int main(int argc, char **argv) {
         request.pid = -1;
         request.needle = 0;
     } else {
-        request.pid = 0;
+        request.pid = getpid();
         request.needle = atoi(argv[1]);
     }
 
@@ -60,7 +64,7 @@ int main(int argc, char **argv) {
 
     if (strcmp(argv[1], "-f") != 0) {
         // open response channel
-        int input = open(CLIENT, O_RDONLY);
+        int input = open(client_fifo, O_RDONLY);
         if (input == -1) {
             perror("open()");
             return 1;
@@ -69,16 +73,16 @@ int main(int argc, char **argv) {
         // receive answer
         out = read(input, &request, sizeof(request));
         close(input);
-        unlink(CLIENT);
+        unlink(client_fifo);
 
         if (out == -1) {
             perror("read()");
             return 1;
         }
 
-        printf("count %d: %d\n", request.needle, request.occurrences);
+        printf("[%d] count %d: %d\n", getpid(), request.needle, request.occurrences);
     } else {
-        unlink(CLIENT);
+        unlink(client_fifo);
     }
 
     return 0;

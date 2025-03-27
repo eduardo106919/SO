@@ -10,7 +10,6 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 
-
 #define LOG_NAME "counts.log"
 #define BUF_SIZE 50
 
@@ -121,6 +120,7 @@ int main(int argc, char **argv) {
     ssize_t out = 0;
     Msg response;
     int n_procs = 0;
+    char client_fifo[BUF_SIZE];
 
     int fildes[2];
     if (pipe(fildes) == -1) {
@@ -150,17 +150,19 @@ int main(int argc, char **argv) {
     int stop = 1;
     int input = 0, output = 0;
 
-    // open request channel
-    input = open(SERVER, O_RDONLY);
-    if (input == -1) {
-        perror("open()");
-        return 1;
-    }
-
     while (stop != 0) {
+
+        // open request channel
+        input = open(SERVER, O_RDONLY);
+        if (input == -1) {
+            perror("open()");
+            return 1;
+        }
 
         // receive request
         out = read(input, &response, sizeof(response));
+        close(input);
+
         if (out == -1) {
             perror("read()");
             return 1;
@@ -181,7 +183,6 @@ int main(int argc, char **argv) {
                     /* error code */
                     perror("fork()");
 
-                    close(input);
                     unlink(SERVER);
 
                     return 1;
@@ -191,11 +192,12 @@ int main(int argc, char **argv) {
 
                     // reading side of the pipe with the register is already closed
 
+                    sprintf(client_fifo, "%s_%d", CLIENT, response.pid);
+
                     response.occurrences = count_needle(response.needle);
-                    response.pid = getpid();
 
                     // open response channel
-                    output = open(CLIENT, O_WRONLY);
+                    output = open(client_fifo, O_WRONLY);
                     if (output == -1) {
                         perror("open()");
 
@@ -213,7 +215,7 @@ int main(int argc, char **argv) {
 
                     // send counting to register
                     out = write(fildes[1], &response, sizeof(response));
-                    close(fildes[1]);
+                    close(fildes[1]); // close writting side of the anon pipe
 
                     if (out == -1) {
                         perror("write()");
@@ -232,7 +234,6 @@ int main(int argc, char **argv) {
         }
     }
 
-    close(input);
     unlink(SERVER);
 
     return 0;
