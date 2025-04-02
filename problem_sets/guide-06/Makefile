@@ -29,6 +29,7 @@ exercise6: exercise6.c
 clean:
 	rm -f *.o
 	rm -f *.out
+	rm -f *.txt
 	rm -f exercise1
 	rm -f exercise2
 	rm -f exercise3
