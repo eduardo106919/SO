@@ -12,7 +12,6 @@ help:
 	@echo "make exercise4"
 	@echo "make exercise5"
 	@echo "make exercise6"
-	@echo "make exercise7"
 
 exercise1: exercise1.c
 
@@ -26,8 +25,6 @@ exercise5: exercise5.c matrix.o matrix.h
 
 exercise6: exercise6.c matrix.o matrix.h
 
-exercise7: exercise7.c matrix.o matrix.h
-
 matrix.o: matrix.c matrix.h
 
 clean:
@@ -38,5 +35,3 @@ clean:
 	rm -f exercise4
 	rm -f exercise5
 	rm -f exercise6
-	rm -f exercise7
-	rm -f matrix

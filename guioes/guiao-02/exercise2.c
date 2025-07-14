@@ -3,19 +3,18 @@
 
 int main(void) {
     pid_t identifier = fork();
-    int status = 0;
 
     if (identifier == 0) {
-        printf("c | id: %d\n", getpid());
-        printf("c | parent id: %d\n", getppid());
+        // child process
+        printf("[C] process id: %d\n", getpid());
+        // this value may change, if the parent exits before this instruction
+        printf("[C] parent id:  %d\n", getppid());
         _exit(0);
     } else if (identifier > 0) {
-        // wait for the child
-        wait(&status);
-
-        printf("p | id: %d\n", getpid());
-        printf("p | parent id: %d\n", getppid());
-        printf("p | child id: %d\n", identifier);
+        // parent process
+        printf("[P] process id: %d\n", getpid());
+        printf("[P] parent id:  %d\n", getppid());
+        printf("[P] child id:   %d\n", identifier);
     } else {
         // error handling
         perror("fork()");

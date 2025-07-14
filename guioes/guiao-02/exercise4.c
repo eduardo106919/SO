@@ -13,7 +13,7 @@ int main(void) {
 
         // child process
         if (identifier == 0) {
-            printf("parent %d | process %d\n", getppid(), getpid());
+            printf("[%d] parent id: %d\n", getpid(), getppid());
             _exit(i);
         } else if (identifier == -1) {
             // fork() error
@@ -22,17 +22,19 @@ int main(void) {
         }
     }
 
-    int status = 0, out = 0;
+    int status = 0;
     for (i = 0; i < MAX_PROC; i++) {
+        // wait for the child process
         identifier = wait(&status);
-
-        if (identifier > 0 && WIFEXITED(status) != 0) {
-            out = WEXITSTATUS(status);
-            printf("-> process %d exited with %d\n", identifier, out);
-        } else if (identifier == -1) {
-            // wait() error
+        if (identifier == -1) {
             perror("wait()");
             return 1;
+        }
+
+        if (WIFEXITED(status) != 0) {
+            printf("process %d exit code: %d\n", identifier, WEXITSTATUS(status));
+        } else {
+            printf("process %d did not exit\n", identifier);
         }
     }
 

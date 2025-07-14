@@ -1,6 +1,8 @@
 #ifndef MATRIX_H
 #define MATRIX_H
 
+#include <stdbool.h>
+
 /* Creates a matrix of random integers, of size ROWS x COLUMNS */
 int **create_matrix();
 
@@ -11,9 +13,9 @@ void destroy_matrix(int **matrix);
 void print_matrix(int **matrix);
 
 /* Checks if values exists in the matrix */
-int value_exists(int **matrix, int value);
+bool value_exists(int **matrix, int value);
 
-/* Shows the lines in which values occurs */
+/* Shows the lines in which value occurs */
 void lines_with_value(int **matrix, int value);
 
 /* Writes a matrix in a file */

@@ -15,10 +15,19 @@ int main(void) {
     // print matrix
     print_matrix(matrix);
 
-    value = rand() % MAX_VALUE;
-    printf("-> searching for %d\n", value);
 
+    value = rand() % MAX_VALUE;
+    printf("searching for %d\n", value);
     lines_with_value(matrix, value);
+
+    value = rand() % MAX_VALUE;
+    printf("searching for %d\n", value);
+    lines_with_value(matrix, value);
+
+    value = rand() % MAX_VALUE;
+    printf("searching for %d\n", value);
+    lines_with_value(matrix, value);
+
 
     // free the matrix
     destroy_matrix(matrix);
