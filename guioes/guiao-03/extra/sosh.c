@@ -1,8 +1,8 @@
+#include <stdio.h>
 #include <readline/history.h>
 #include <readline/readline.h>
 #include <wordexp.h>
 #include <stdlib.h>
-#include <stdio.h>
 #include <string.h>
 #include <unistd.h>
 #include <sys/wait.h>
