@@ -1,17 +1,16 @@
-# Operative Systems
+# Sistemas Operativos
 
-Here you can find resolutions for the contents covered in **Operating Systems** 2024/2025.
+Conteúdo abordado na unidade curricular Sistemas Operativos no ano letivo 2024/2025.
 
-:warning: This repository is sill in **development**.
+## Conteúdos
 
-## Contents
+Neste repositório poderás encontrar o seguinte conteúdo:
 
-- [Guides](/problem_sets/)
-- [Tests](/tests/)
-- [Side projects](/side-projects)
+- resulução dos [guiões](/guioes/) práticos, 
+- resolução dos [testes](/testes/) e exames de vários anos
+- enunciados de [trabalhos](/trabalhos/) práticos de vários anos
+- [slides](/slides/) com a matéria abordada na cadeira
 
-## Others
+---
 
-You can also find some resolutions of side projects, found here: [OS-projects](https://github.com/remzi-arpacidusseau/ostep-projects?tab=readme-ov-file).
-This repo can be found in the official book of this class, or [here](/slides/0-Presentation.pdf).
-
+Se encontrarem **erros** ou acharem que algo pode estar melhor entrem em contacto comigo.
