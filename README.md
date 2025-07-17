@@ -13,4 +13,4 @@ Neste repositório poderás encontrar o seguinte conteúdo:
 
 ---
 
-Se encontrarem **erros** ou acharem que algo pode estar melhor entrem em contacto comigo.
+Se encontrarem **erros** ou acharem que algo pode estar melhor entrem em [contacto](mailto:a106919@alunos.uminho.pt) comigo.
